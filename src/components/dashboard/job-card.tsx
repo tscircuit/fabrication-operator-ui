@@ -17,7 +17,7 @@ export function JobCard({ job, isActive, onSelect }: JobCardProps) {
       onClick={onSelect}
     >
       <span className="job-card-preview">
-        <JobPreviewSvg />
+        <JobPreviewSvg job={job} />
       </span>
       <span className="job-card-main">
         <strong>{job.name}</strong>
