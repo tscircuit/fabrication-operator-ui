@@ -9,6 +9,7 @@
       "cosmos-export",
       "dist",
       "package.json",
+      "assets",
       ".next",
       "tsconfig.json",
       "tsconfig.node.json",

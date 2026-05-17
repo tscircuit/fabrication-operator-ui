@@ -396,10 +396,17 @@ button {
   background-size: 12px 12px;
 }
 
-.job-preview-svg {
+.job-card-preview img {
   display: block;
   width: 100%;
   height: 100%;
+  object-fit: contain;
+}
+
+.job-preview-state {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 720;
 }
 
 .preview-board {

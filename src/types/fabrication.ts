@@ -4,6 +4,7 @@ export interface Job {
   id: string
   name: string
   file: string
+  loadCircuitJson: () => Promise<unknown[]>
   board: string
   layers: string
   stage: string
