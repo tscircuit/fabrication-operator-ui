@@ -5,8 +5,17 @@ import { JobQueue } from "./job-queue"
 import { TopBar } from "./top-bar"
 import { UploadPanel } from "./upload-panel"
 
-export function Dashboard() {
+interface DashboardProps {
+  onOpenJob: (jobId: string) => void
+}
+
+export function Dashboard({ onOpenJob }: DashboardProps) {
   const { activeJob, jobs, setActiveJobId, stats } = useFabricationDashboard()
+
+  const handleOpenJob = (jobId: string) => {
+    setActiveJobId(jobId)
+    onOpenJob(jobId)
+  }
 
   return (
     <div className="app-shell">
@@ -26,7 +35,7 @@ export function Dashboard() {
         <JobQueue
           jobs={jobs}
           activeJob={activeJob}
-          onSelectJob={setActiveJobId}
+          onSelectJob={handleOpenJob}
         />
       </main>
     </div>
