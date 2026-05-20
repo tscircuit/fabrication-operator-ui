@@ -614,7 +614,8 @@ button {
 
 .stage-rail,
 .stage-panel,
-.fabrication-circuit-card {
+.fabrication-circuit-card,
+.camera-preview-card {
   border: 1px solid var(--line);
   border-radius: 10px;
   background: #ffffff;
@@ -780,8 +781,25 @@ button {
   white-space: nowrap;
 }
 
-.fabrication-circuit-card {
+.fabrication-preview-grid {
+  display: grid;
+  grid-template-areas: "camera" "circuit";
+  gap: 18px;
   min-width: 0;
+}
+
+.fabrication-circuit-card {
+  grid-area: circuit;
+  min-width: 0;
+  padding: 18px;
+}
+
+.camera-preview-card {
+  display: flex;
+  grid-area: camera;
+  min-width: 0;
+  flex-direction: column;
+  gap: 14px;
   padding: 18px;
 }
 
@@ -815,6 +833,103 @@ button {
   height: 100%;
   max-height: 520px;
   object-fit: contain;
+}
+
+.camera-status {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 0 8px;
+  border-radius: 7px;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.camera-status.simulated {
+  color: var(--blue-strong);
+  background: var(--blue-soft);
+}
+
+.camera-status.no-camera {
+  color: #b4232f;
+  background: var(--red-soft);
+}
+
+.camera-status.connected {
+  color: #087443;
+  background: var(--green-soft);
+}
+
+.camera-preview-frame {
+  position: relative;
+  display: grid;
+  width: 100%;
+  min-height: 280px;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid #202938;
+  border-radius: 8px;
+  color: #d0d5dd;
+  background: linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    #070b12;
+  background-size: 18px 18px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+}
+
+.camera-preview-frame::after {
+  position: absolute;
+  inset: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  content: "";
+  pointer-events: none;
+}
+
+.camera-preview-frame span {
+  z-index: 1;
+  color: #d0d5dd;
+  font-size: 13px;
+  font-weight: 760;
+}
+
+.camera-preview-frame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.camera-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+.camera-actions .soft-button,
+.camera-actions .primary-button {
+  min-width: 0;
+  padding-inline: 10px;
+  white-space: nowrap;
+}
+
+@media (min-width: 1120px) {
+  .fabrication-preview-grid {
+    grid-template-areas: "circuit camera";
+    grid-template-columns: minmax(0, 1.45fr) minmax(320px, 0.9fr);
+    align-items: stretch;
+  }
+
+  .camera-preview-card {
+    align-self: stretch;
+  }
+
+  .camera-preview-frame {
+    flex: 1;
+    min-height: 0;
+  }
 }
 
 @media (max-width: 980px) {
@@ -861,6 +976,10 @@ button {
   }
 
   .stage-facts {
+    grid-template-columns: 1fr;
+  }
+
+  .camera-actions {
     grid-template-columns: 1fr;
   }
 }
