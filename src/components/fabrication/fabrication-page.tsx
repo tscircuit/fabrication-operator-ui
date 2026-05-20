@@ -5,6 +5,7 @@ import type { FabricationStageId, Job } from "../../types/fabrication"
 import { JobPreviewSvg } from "../dashboard/job-preview-svg"
 import { Button } from "../ui/button"
 import { StatusBadge } from "../ui/status-badge"
+import { CameraPreviewCard } from "./camera-preview-card"
 
 interface FabricationPageProps {
   job: Job
@@ -118,16 +119,20 @@ export function FabricationPage({
             </div>
           </div>
 
-          <div className="fabrication-circuit-card">
-            <div className="section-header">
-              <div>
-                <h2>Circuit Preview</h2>
-                <p>PCB SVG generated from Circuit JSON</p>
+          <div className="fabrication-preview-grid">
+            <CameraPreviewCard />
+
+            <div className="fabrication-circuit-card">
+              <div className="section-header">
+                <div>
+                  <h2>Circuit Preview</h2>
+                  <p>PCB SVG generated from Circuit JSON</p>
+                </div>
+                <span className="layer-pill">{job.layers}</span>
               </div>
-              <span className="layer-pill">{job.layers}</span>
-            </div>
-            <div className="fabrication-circuit-preview">
-              <JobPreviewSvg job={job} />
+              <div className="fabrication-circuit-preview">
+                <JobPreviewSvg job={job} />
+              </div>
             </div>
           </div>
         </section>
