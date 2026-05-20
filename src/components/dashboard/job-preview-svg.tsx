@@ -42,11 +42,13 @@ export function JobPreviewSvg({ job }: JobPreviewSvgProps) {
   }, [job])
 
   if (hasError) {
-    return <span className="job-preview-state">Preview unavailable</span>
+    return (
+      <span className="text-xs font-bold text-muted">Preview unavailable</span>
+    )
   }
 
   if (!previewUrl) {
-    return <span className="job-preview-state">Rendering PCB</span>
+    return <span className="text-xs font-bold text-muted">Rendering PCB</span>
   }
 
   return <img alt={`${job.name} PCB preview`} src={previewUrl} />
