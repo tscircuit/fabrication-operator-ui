@@ -1,5 +1,6 @@
 import type React from "react"
 import { useEffect } from "react"
+import "./src/styles.css"
 
 export const TailwindDecorator = ({
   children,
