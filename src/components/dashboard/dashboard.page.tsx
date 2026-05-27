@@ -1,5 +1,5 @@
 import { Dashboard } from "./dashboard"
 
 export default function DashboardPage() {
-  return <Dashboard onOpenJob={() => {}} />
+  return <Dashboard onOpenJob={() => {}} onOpenJobs={() => {}} />
 }
