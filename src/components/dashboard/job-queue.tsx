@@ -6,9 +6,15 @@ interface JobQueueProps {
   jobs: Job[]
   activeJob: Job
   onSelectJob: (jobId: string) => void
+  onViewAll: () => void
 }
 
-export function JobQueue({ jobs, activeJob, onSelectJob }: JobQueueProps) {
+export function JobQueue({
+  jobs,
+  activeJob,
+  onSelectJob,
+  onViewAll,
+}: JobQueueProps) {
   return (
     <section
       className="mt-5 min-w-0 rounded-[10px] border border-line bg-white/95 p-[18px] shadow-[0_10px_30px_rgba(15,23,42,0.04)]"
@@ -23,7 +29,9 @@ export function JobQueue({ jobs, activeJob, onSelectJob }: JobQueueProps) {
             Conversion jobs and export status
           </p>
         </div>
-        <Button variant="icon-label">View All</Button>
+        <Button variant="icon-label" onClick={onViewAll}>
+          View All
+        </Button>
       </div>
 
       <div className="grid grid-cols-3 gap-3.5 max-[980px]:grid-cols-1">

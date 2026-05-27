@@ -7,9 +7,10 @@ import { UploadPanel } from "./upload-panel"
 
 interface DashboardProps {
   onOpenJob: (jobId: string) => void
+  onOpenJobs: () => void
 }
 
-export function Dashboard({ onOpenJob }: DashboardProps) {
+export function Dashboard({ onOpenJob, onOpenJobs }: DashboardProps) {
   const { activeJob, jobs, setActiveJobId, stats } = useFabricationDashboard()
 
   const handleOpenJob = (jobId: string) => {
@@ -39,6 +40,7 @@ export function Dashboard({ onOpenJob }: DashboardProps) {
           jobs={jobs}
           activeJob={activeJob}
           onSelectJob={handleOpenJob}
+          onViewAll={onOpenJobs}
         />
       </main>
     </div>
