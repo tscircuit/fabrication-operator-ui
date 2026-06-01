@@ -11,11 +11,13 @@ import { CameraPreviewCard } from "./camera-preview-card"
 interface FabricationPageProps {
   job: Job
   onBackToDashboard: () => void
+  onConfirmStage: (stageId: FabricationStageId) => void
 }
 
 export function FabricationPage({
   job,
   onBackToDashboard,
+  onConfirmStage,
 }: FabricationPageProps) {
   const [activeStageId, setActiveStageId] = useState<FabricationStageId>(
     job.currentStage,
@@ -165,12 +167,41 @@ export function FabricationPage({
 
         <section className="grid min-w-0 gap-[18px]">
           <div className="rounded-[10px] border border-line bg-white p-[22px] shadow-[0_8px_26px_rgba(15,23,42,0.04)]">
-            <div className="text-[10px] font-bold uppercase tracking-normal text-muted">
-              Stage {activeStageIndex + 1}
+            <div className="flex items-start justify-between gap-4 max-[720px]:flex-col">
+              <div className="min-w-0">
+                <div className="text-[10px] font-bold uppercase tracking-normal text-muted">
+                  Stage {activeStageIndex + 1}
+                </div>
+                <h1 className="mt-1.5 text-[34px] font-bold leading-tight text-ink">
+                  {activeStage.label}
+                </h1>
+              </div>
+              <Button
+                className="min-h-[42px] shrink-0 px-4 text-sm max-[720px]:w-full"
+                disabled={
+                  activeStageIndex !== currentStageIndex ||
+                  job.status === "completed"
+                }
+                variant={
+                  activeStageIndex === currentStageIndex &&
+                  job.status !== "completed"
+                    ? "primary"
+                    : "soft"
+                }
+                onClick={() => onConfirmStage(activeStage.id)}
+              >
+                <CheckCircle2 size={17} />
+                {job.status === "completed"
+                  ? "Confirmed"
+                  : activeStageIndex === currentStageIndex
+                    ? activeStage.id === "COMPLETE"
+                      ? "Complete Job"
+                      : "Confirm & Next"
+                    : activeStageIndex < currentStageIndex
+                      ? "Confirmed"
+                      : "Confirm & Next"}
+              </Button>
             </div>
-            <h1 className="mt-1.5 text-[34px] font-bold leading-tight text-ink">
-              {activeStage.label}
-            </h1>
             <p className="mt-2.5 max-w-[760px] text-[15px] leading-relaxed text-[#4d5765]">
               {activeStage.detail}
             </p>
