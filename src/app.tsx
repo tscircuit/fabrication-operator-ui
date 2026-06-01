@@ -3,6 +3,8 @@ import { Dashboard } from "./components/dashboard/dashboard"
 import { FabricationPage } from "./components/fabrication/fabrication-page"
 import { JobsPage } from "./components/jobs/jobs-page"
 import { initialJobs } from "./data/fabrication-data"
+import { fabricationStages } from "./data/fabrication-stages"
+import type { FabricationStageId } from "./types/fabrication"
 
 type AppRoute =
   | { name: "dashboard" }
@@ -24,10 +26,9 @@ function getRouteFromHash(): AppRoute {
 
 export function App() {
   const [route, setRoute] = useState<AppRoute>(() => getRouteFromHash())
+  const [jobs, setJobs] = useState(initialJobs)
   const selectedJob =
-    route.name === "job"
-      ? initialJobs.find((job) => job.id === route.jobId)
-      : null
+    route.name === "job" ? jobs.find((job) => job.id === route.jobId) : null
 
   useEffect(() => {
     const handleHashChange = () => setRoute(getRouteFromHash())
@@ -51,11 +52,51 @@ export function App() {
     setRoute({ name: "dashboard" })
   }
 
+  const handleConfirmStage = (stageId: FabricationStageId) => {
+    if (!selectedJob) {
+      return
+    }
+
+    const stageIndex = fabricationStages.findIndex(
+      (stage) => stage.id === stageId,
+    )
+    const currentStageIndex = fabricationStages.findIndex(
+      (stage) => stage.id === selectedJob.currentStage,
+    )
+
+    if (stageIndex < 0 || stageIndex !== currentStageIndex) {
+      return
+    }
+
+    const nextStage = fabricationStages[stageIndex + 1]
+    const isComplete = !nextStage
+    const confirmedStage = fabricationStages[stageIndex]
+
+    setJobs((currentJobs) =>
+      currentJobs.map((job) =>
+        job.id === selectedJob.id
+          ? {
+              ...job,
+              currentStage: nextStage?.id ?? job.currentStage,
+              progress: isComplete
+                ? 100
+                : Math.round(
+                    ((stageIndex + 1) / fabricationStages.length) * 100,
+                  ),
+              stage: isComplete ? "Complete" : confirmedStage.output,
+              status: isComplete ? "completed" : "in-progress",
+            }
+          : job,
+      ),
+    )
+  }
+
   if (selectedJob) {
     return (
       <FabricationPage
         job={selectedJob}
         onBackToDashboard={handleBackToDashboard}
+        onConfirmStage={handleConfirmStage}
       />
     )
   }
@@ -63,7 +104,7 @@ export function App() {
   if (route.name === "jobs") {
     return (
       <JobsPage
-        jobs={initialJobs}
+        jobs={jobs}
         onBackToDashboard={handleBackToDashboard}
         onOpenJob={handleOpenJob}
       />
