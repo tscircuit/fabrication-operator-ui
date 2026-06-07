@@ -23,7 +23,7 @@ export function Dashboard({ onOpenJob, onOpenJobs }: DashboardProps) {
       <TopBar />
 
       <main className="mx-auto w-[min(1180px,calc(100%_-_48px))] py-11 pb-16 max-[980px]:w-[min(calc(100%_-_32px),760px)] max-[980px]:pt-8">
-        <DashboardHeading />
+        <DashboardHeading activeJob={activeJob} jobs={jobs} />
 
         <section
           className="mt-7 grid grid-cols-4 gap-3.5 max-[980px]:grid-cols-1 max-[620px]:grid-cols-2"
