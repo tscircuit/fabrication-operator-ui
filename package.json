@@ -18,9 +18,9 @@
   "dependencies": {
     "@tscircuit/alphabet": "^0.0.25",
     "@tscircuit/circuit-json-util": "^0.0.94",
-    "circuit-json": "^0.0.426",
+    "circuit-json": "^0.0.433",
     "circuit-json-to-connectivity-map": "^0.0.23",
-    "circuit-to-svg": "^0.0.347",
+    "circuit-to-svg": "^0.0.353",
     "lucide-react": "^1.16.0",
     "react": "^19.1.0",
     "react-cosmos": "^7.1.0",
