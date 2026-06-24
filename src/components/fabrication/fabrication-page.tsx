@@ -244,7 +244,7 @@ export function FabricationPage({
                     Circuit Preview
                   </h2>
                   <p className="mt-1 text-[10px] font-bold normal-case tracking-normal text-muted">
-                    PCB SVG generated from Circuit JSON
+                    3D PNG generated from Circuit JSON
                   </p>
                 </div>
                 <span className="rounded-lg border border-line-soft bg-[#f8fafc] px-2.5 py-1.5 font-mono text-[11px] text-muted">
