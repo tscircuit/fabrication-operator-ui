@@ -1,22 +1,25 @@
 import { useFabricationDashboard } from "../../hooks/use-fabrication-dashboard"
 import { StatusCard } from "../ui/status-card"
 import { DashboardHeading } from "./dashboard-heading"
+import { JobDetailPanel } from "./job-detail-panel"
 import { JobQueue } from "./job-queue"
 import { TopBar } from "./top-bar"
 import { UploadPanel } from "./upload-panel"
 
 interface DashboardProps {
-  onOpenJob: (jobId: string) => void
   onOpenJobs: () => void
 }
 
-export function Dashboard({ onOpenJob, onOpenJobs }: DashboardProps) {
-  const { activeJob, jobs, setActiveJobId, stats } = useFabricationDashboard()
-
-  const handleOpenJob = (jobId: string) => {
-    setActiveJobId(jobId)
-    onOpenJob(jobId)
-  }
+export function Dashboard({ onOpenJobs }: DashboardProps) {
+  const {
+    activeJob,
+    error,
+    isLoadingJobDetails,
+    isLoadingJobs,
+    jobs,
+    setActiveJobId,
+    stats,
+  } = useFabricationDashboard()
 
   return (
     <div className="min-h-screen min-w-80 bg-[radial-gradient(circle_at_18%_14%,rgba(11,118,209,0.08),transparent_24rem),linear-gradient(180deg,#ffffff_0%,#f7f8fb_52%,#eef2f7_100%)] font-sans text-ink antialiased">
@@ -39,8 +42,15 @@ export function Dashboard({ onOpenJob, onOpenJobs }: DashboardProps) {
         <JobQueue
           jobs={jobs}
           activeJob={activeJob}
-          onSelectJob={handleOpenJob}
+          isLoading={isLoadingJobs}
+          onSelectJob={setActiveJobId}
           onViewAll={onOpenJobs}
+        />
+
+        <JobDetailPanel
+          error={error}
+          isLoading={isLoadingJobDetails}
+          job={activeJob}
         />
       </main>
     </div>

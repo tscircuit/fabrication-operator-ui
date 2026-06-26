@@ -111,5 +111,5 @@ export function App() {
     )
   }
 
-  return <Dashboard onOpenJob={handleOpenJob} onOpenJobs={handleOpenJobs} />
+  return <Dashboard onOpenJobs={handleOpenJobs} />
 }

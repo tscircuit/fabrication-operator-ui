@@ -128,7 +128,7 @@ export class FakeFabricationServerClient {
 
   constructor(options: ApiClientOptions = {}) {
     this.baseUrl = normalizeBaseUrl(options.baseUrl ?? DEFAULT_BASE_URL)
-    this.fetchImpl = options.fetch ?? fetch
+    this.fetchImpl = options.fetch ?? globalThis.fetch.bind(globalThis)
     this.headers = options.headers ?? {}
   }
 

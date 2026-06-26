@@ -4,7 +4,8 @@ import { JobCard } from "./job-card"
 
 interface JobQueueProps {
   jobs: Job[]
-  activeJob: Job
+  activeJob: Job | null
+  isLoading: boolean
   onSelectJob: (jobId: string) => void
   onViewAll: () => void
 }
@@ -12,6 +13,7 @@ interface JobQueueProps {
 export function JobQueue({
   jobs,
   activeJob,
+  isLoading,
   onSelectJob,
   onViewAll,
 }: JobQueueProps) {
@@ -26,7 +28,9 @@ export function JobQueue({
             Recent Jobs
           </h2>
           <p className="mt-1 text-[10px] font-bold normal-case tracking-normal text-muted">
-            Conversion jobs and export status
+            {isLoading
+              ? "Loading fabrication_jobs/list"
+              : "Conversion jobs and export status"}
           </p>
         </div>
         <Button variant="icon-label" onClick={onViewAll}>
@@ -34,16 +38,22 @@ export function JobQueue({
         </Button>
       </div>
 
-      <div className="grid grid-cols-3 gap-3.5 max-[980px]:grid-cols-1">
-        {jobs.map((job) => (
-          <JobCard
-            key={job.id}
-            job={job}
-            isActive={job.id === activeJob.id}
-            onSelect={() => onSelectJob(job.id)}
-          />
-        ))}
-      </div>
+      {jobs.length > 0 ? (
+        <div className="grid grid-cols-3 gap-3.5 max-[980px]:grid-cols-1">
+          {jobs.map((job) => (
+            <JobCard
+              key={job.id}
+              job={job}
+              isActive={job.id === activeJob?.id}
+              onSelect={() => onSelectJob(job.id)}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="rounded-lg border border-line-soft bg-surface-soft p-4 text-sm font-semibold text-muted">
+          No fabrication jobs returned.
+        </div>
+      )}
     </section>
   )
 }

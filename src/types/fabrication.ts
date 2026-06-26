@@ -24,6 +24,11 @@ export interface Job {
   status: JobStatus
   elapsed: string
   progress: number
+  stages?: FabricationJobStage[]
+  carrierState?: unknown
+  laserState?: unknown
+  savedAlignmentOrigins?: unknown
+  raw?: unknown
 }
 
 export interface FabricationStage {
@@ -33,4 +38,11 @@ export interface FabricationStage {
   detail: string
   output: string
   duration: string
+}
+
+export interface FabricationJobStage {
+  id: string
+  label: string
+  status?: string
+  detail?: string
 }
