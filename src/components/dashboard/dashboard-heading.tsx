@@ -5,7 +5,7 @@ import type { Job } from "../../types/fabrication"
 import { StatusBadge } from "../ui/status-badge"
 
 interface DashboardHeadingProps {
-  activeJob: Job
+  activeJob: Job | null
   jobs: Job[]
 }
 
@@ -15,7 +15,7 @@ export function DashboardHeading({ activeJob, jobs }: DashboardHeadingProps) {
   const readyJobs = jobs.filter((job) => job.status !== "failed")
   const lastExport = jobs.find((job) => job.status === "completed")
   const activeStage =
-    fabricationStages.find((stage) => stage.id === activeJob.currentStage) ??
+    fabricationStages.find((stage) => stage.id === activeJob?.currentStage) ??
     fabricationStages[0]
   const needsAttention = failedJobs.length > 0
 
@@ -29,8 +29,8 @@ export function DashboardHeading({ activeJob, jobs }: DashboardHeadingProps) {
     },
     {
       label: "Current Stage",
-      value: activeStage.label,
-      detail: activeJob.stage,
+      value: activeJob ? activeStage.label : "No job selected",
+      detail: activeJob?.stage ?? "Waiting for fabrication_jobs/list",
       tone: "blue",
       icon: Factory,
     },
@@ -60,12 +60,14 @@ export function DashboardHeading({ activeJob, jobs }: DashboardHeadingProps) {
           </span>
           <div className="mt-2 flex min-w-0 flex-wrap items-center gap-3">
             <h1 className="m-0 overflow-hidden text-ellipsis whitespace-nowrap text-[28px] font-[830] leading-tight text-ink max-[620px]:text-2xl">
-              {activeJob.name}
+              {activeJob?.name ?? "No job selected"}
             </h1>
-            <StatusBadge status={activeJob.status} />
+            {activeJob ? <StatusBadge status={activeJob.status} /> : null}
           </div>
           <p className="mt-2 max-w-[760px] text-[14px] leading-relaxed text-[#4d5765]">
-            {activeJob.file} / {activeJob.board} / {activeJob.layers}
+            {activeJob
+              ? `${activeJob.file} / ${activeJob.board} / ${activeJob.layers}`
+              : "No jobs returned from fabrication_jobs/list"}
           </p>
         </div>
 
