@@ -1,8 +1,10 @@
 import { useFabricationDashboard } from "../../hooks/use-fabrication-dashboard"
 import { StatusCard } from "../ui/status-card"
+import { CreateJobPanel } from "./create-job-panel"
 import { DashboardHeading } from "./dashboard-heading"
 import { JobDetailPanel } from "./job-detail-panel"
 import { JobQueue } from "./job-queue"
+import { OperatorControlsPanel } from "./operator-controls-panel"
 import { TopBar } from "./top-bar"
 import { UploadPanel } from "./upload-panel"
 
@@ -12,12 +14,24 @@ interface DashboardProps {
 
 export function Dashboard({ onOpenJobs }: DashboardProps) {
   const {
+    actionMessage,
     activeJob,
+    burnRuns,
+    burnStage,
+    completeStage,
+    createJob,
     error,
+    inspectBurnRun,
+    isCreatingJob,
+    isLoadingBurnRuns,
     isLoadingJobDetails,
     isLoadingJobs,
+    isRunningAction,
     jobs,
+    runCarrierAction,
+    selectedBurnRun,
     setActiveJobId,
+    setLaserOrigin,
     stats,
   } = useFabricationDashboard()
 
@@ -39,6 +53,12 @@ export function Dashboard({ onOpenJobs }: DashboardProps) {
 
         <UploadPanel />
 
+        <CreateJobPanel
+          actionMessage={actionMessage}
+          isCreating={isCreatingJob}
+          onCreateJob={createJob}
+        />
+
         <JobQueue
           jobs={jobs}
           activeJob={activeJob}
@@ -51,6 +71,20 @@ export function Dashboard({ onOpenJobs }: DashboardProps) {
           error={error}
           isLoading={isLoadingJobDetails}
           job={activeJob}
+        />
+
+        <OperatorControlsPanel
+          burnRuns={burnRuns}
+          error={error}
+          isLoadingBurnRuns={isLoadingBurnRuns}
+          isRunningAction={isRunningAction}
+          job={activeJob}
+          onBurnStage={burnStage}
+          onCarrierAction={runCarrierAction}
+          onCompleteStage={completeStage}
+          onInspectBurnRun={inspectBurnRun}
+          onSetLaserOrigin={setLaserOrigin}
+          selectedBurnRun={selectedBurnRun}
         />
       </main>
     </div>
