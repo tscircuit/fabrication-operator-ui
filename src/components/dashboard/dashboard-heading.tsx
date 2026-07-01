@@ -14,9 +14,6 @@ export function DashboardHeading({ activeJob, jobs }: DashboardHeadingProps) {
   const pendingJobs = jobs.filter((job) => job.status === "pending")
   const readyJobs = jobs.filter((job) => job.status !== "failed")
   const lastExport = jobs.find((job) => job.status === "completed")
-  const activeStage =
-    fabricationStages.find((stage) => stage.id === activeJob?.currentStage) ??
-    fabricationStages[0]
   const needsAttention = failedJobs.length > 0
 
   const operationSignals = [
@@ -29,8 +26,13 @@ export function DashboardHeading({ activeJob, jobs }: DashboardHeadingProps) {
     },
     {
       label: "Current Stage",
-      value: activeJob ? activeStage.label : "No job selected",
-      detail: activeJob?.stage ?? "Waiting for fabrication_jobs/list",
+      value: activeJob
+        ? (fabricationStages.find(
+            (stage) => stage.id === activeJob.currentStage,
+          )?.label ?? activeJob.currentStage)
+        : "Open a job",
+      detail:
+        activeJob?.stage ?? "Click a job card for fabrication_jobs stages",
       tone: "blue",
       icon: Factory,
     },
@@ -60,14 +62,14 @@ export function DashboardHeading({ activeJob, jobs }: DashboardHeadingProps) {
           </span>
           <div className="mt-2 flex min-w-0 flex-wrap items-center gap-3">
             <h1 className="m-0 overflow-hidden text-ellipsis whitespace-nowrap text-[28px] font-[830] leading-tight text-ink max-[620px]:text-2xl">
-              {activeJob?.name ?? "No job selected"}
+              {activeJob?.name ?? "Fabrication Jobs"}
             </h1>
             {activeJob ? <StatusBadge status={activeJob.status} /> : null}
           </div>
           <p className="mt-2 max-w-[760px] text-[14px] leading-relaxed text-[#4d5765]">
             {activeJob
               ? `${activeJob.file} / ${activeJob.board} / ${activeJob.layers}`
-              : "No jobs returned from fabrication_jobs/list"}
+              : "Create from a sample or open a Circuit JSON file, then choose a job card to run its stages."}
           </p>
         </div>
 

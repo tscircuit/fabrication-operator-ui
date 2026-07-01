@@ -1,21 +1,18 @@
 import type { Job } from "../../types/fabrication"
-import { Button } from "../ui/button"
 import { JobCard } from "./job-card"
 
 interface JobQueueProps {
-  jobs: Job[]
   activeJob: Job | null
+  jobs: Job[]
   isLoading: boolean
-  onSelectJob: (jobId: string) => void
-  onViewAll: () => void
+  onOpenJob: (jobId: string) => void
 }
 
 export function JobQueue({
-  jobs,
   activeJob,
+  jobs,
   isLoading,
-  onSelectJob,
-  onViewAll,
+  onOpenJob,
 }: JobQueueProps) {
   return (
     <section
@@ -30,12 +27,9 @@ export function JobQueue({
           <p className="mt-1 text-[10px] font-bold normal-case tracking-normal text-muted">
             {isLoading
               ? "Loading fabrication_jobs/list"
-              : "Conversion jobs and export status"}
+              : "Select a job card to open fabrication_jobs stages"}
           </p>
         </div>
-        <Button variant="icon-label" onClick={onViewAll}>
-          View All
-        </Button>
       </div>
 
       {jobs.length > 0 ? (
@@ -45,7 +39,7 @@ export function JobQueue({
               key={job.id}
               job={job}
               isActive={job.id === activeJob?.id}
-              onSelect={() => onSelectJob(job.id)}
+              onSelect={() => onOpenJob(job.id)}
             />
           ))}
         </div>
