@@ -31,7 +31,9 @@
     "react": "^19.1.0",
     "react-cosmos": "^7.1.0",
     "react-dom": "^19.1.0",
-    "schematic-symbols": "^0.0.224"
+    "schematic-symbols": "^0.0.224",
+    "svgson": "^5.3.1",
+    "transformation-matrix": "^3.1.0"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
