@@ -32,6 +32,7 @@ export interface CreateFabricationJobInput {
   name?: string
   file?: string
   circuit_json?: ApiJson
+  lbrn_files?: ApiJson
   [key: string]: ApiJson | undefined
 }
 
@@ -197,6 +198,81 @@ export class FakeFabricationServerClient {
     return this.request<FakeFabricationJob>("fabrication_jobs/next_stage", {
       body: getLookupQuery(lookup),
       method: "POST",
+    })
+  }
+
+  clampPcb(lookup: FabricationJobLookup) {
+    return this.carrier("clamp_pcb", {
+      body: getLookupQuery(lookup),
+      method: "POST",
+    })
+  }
+
+  releasePcb(lookup: FabricationJobLookup) {
+    return this.carrier("release_pcb", {
+      body: getLookupQuery(lookup),
+      method: "POST",
+    })
+  }
+
+  moveCarrierToX(lookup: FabricationJobLookup, x: number) {
+    return this.carrier("move", {
+      body: { ...getLookupQuery(lookup), x },
+      method: "POST",
+    })
+  }
+
+  rotateCarrierToAngle(lookup: FabricationJobLookup, angle_deg: number) {
+    return this.carrier("rotate", {
+      body: { ...getLookupQuery(lookup), angle_deg },
+      method: "POST",
+    })
+  }
+
+  rotateCarrierToOrientation(
+    lookup: FabricationJobLookup,
+    orientation: "bottom" | "pcb_drop" | "pcb_insertion" | "top",
+  ) {
+    return this.carrier("rotate_to", {
+      body: { ...getLookupQuery(lookup), orientation },
+      method: "POST",
+    })
+  }
+
+  setLaserOrigin(
+    lookup: FabricationJobLookup,
+    origin: { x: number; y: number },
+  ) {
+    return this.laser("set_origin", {
+      body: { ...getLookupQuery(lookup), origin },
+      method: "POST",
+    })
+  }
+
+  burnLaser(
+    lookup: FabricationJobLookup,
+    input: { lbrn_file_key: string; stage: string },
+  ) {
+    return this.laser("burn", {
+      body: { ...getLookupQuery(lookup), ...input },
+      method: "POST",
+    })
+  }
+
+  listLaserBurnRuns(lookup: FabricationJobLookup) {
+    return this.laserBurnRuns<ApiJson[]>("list", {
+      query: getLookupQuery(lookup),
+    })
+  }
+
+  getLaserBurnRun(
+    lookup: FabricationJobLookup & { laser_burn_run_id: string },
+  ) {
+    return this.laserBurnRuns<ApiJson>("get", {
+      query: {
+        ...getLookupQuery(lookup),
+        laser_burn_run_id: lookup.laser_burn_run_id,
+      },
     })
   }
 
