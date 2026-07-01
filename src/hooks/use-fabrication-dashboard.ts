@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react"
 import { initialJobs } from "../data/fabrication-data"
 import {
   type CarrierOrientation,
+  createFabricationJobFromCircuitJson,
   burnLaserStage,
   completeCurrentStage,
   createFabricationJobFromSample,
@@ -223,6 +224,33 @@ export function useFabricationDashboard() {
     }
   }
 
+  async function createJobFromCircuitJsonFile(file: File) {
+    setIsCreatingJob(true)
+    setError(null)
+    setActionMessage("Reading Circuit JSON")
+
+    try {
+      const circuitJson = JSON.parse(await file.text()) as unknown
+      setActionMessage("Generating LBRN files")
+
+      const createdJob = await createFabricationJobFromCircuitJson({
+        circuitJson,
+        file: file.name,
+        name: file.name.replace(/\.[^.]+$/, "") || file.name,
+      })
+      replaceJob(createdJob)
+      setActionMessage("Fabrication job created")
+    } catch (requestError) {
+      setError(
+        requestError instanceof Error
+          ? requestError.message
+          : "Unable to create fabrication job",
+      )
+    } finally {
+      setIsCreatingJob(false)
+    }
+  }
+
   async function completeStage() {
     if (!activeJob) {
       return
@@ -354,6 +382,7 @@ export function useFabricationDashboard() {
     burnStage,
     completeStage,
     createJob,
+    createJobFromCircuitJsonFile,
     error,
     inspectBurnRun,
     isCreatingJob,
@@ -370,3 +399,7 @@ export function useFabricationDashboard() {
     stats,
   }
 }
+
+export type FabricationDashboardState = ReturnType<
+  typeof useFabricationDashboard
+>

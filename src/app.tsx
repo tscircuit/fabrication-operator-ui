@@ -1,21 +1,11 @@
 import { useEffect, useState } from "react"
 import { Dashboard } from "./components/dashboard/dashboard"
-import { FabricationPage } from "./components/fabrication/fabrication-page"
-import { JobsPage } from "./components/jobs/jobs-page"
-import { initialJobs } from "./data/fabrication-data"
-import { fabricationStages } from "./data/fabrication-stages"
-import type { FabricationStageId } from "./types/fabrication"
+import { JobStagesPage } from "./components/dashboard/job-stages-page"
+import { useFabricationDashboard } from "./hooks/use-fabrication-dashboard"
 
-type AppRoute =
-  | { name: "dashboard" }
-  | { name: "jobs" }
-  | { name: "job"; jobId: string }
+type AppRoute = { name: "dashboard" } | { name: "job"; jobId: string }
 
 function getRouteFromHash(): AppRoute {
-  if (window.location.hash === "#/jobs") {
-    return { name: "jobs" }
-  }
-
   const jobMatch = window.location.hash.match(/^#\/jobs\/([^/]+)$/)
   if (jobMatch?.[1]) {
     return { name: "job", jobId: jobMatch[1] }
@@ -26,9 +16,7 @@ function getRouteFromHash(): AppRoute {
 
 export function App() {
   const [route, setRoute] = useState<AppRoute>(() => getRouteFromHash())
-  const [jobs, setJobs] = useState(initialJobs)
-  const selectedJob =
-    route.name === "job" ? jobs.find((job) => job.id === route.jobId) : null
+  const dashboard = useFabricationDashboard()
 
   useEffect(() => {
     const handleHashChange = () => setRoute(getRouteFromHash())
@@ -37,14 +25,16 @@ export function App() {
     return () => window.removeEventListener("hashchange", handleHashChange)
   }, [])
 
+  useEffect(() => {
+    if (route.name === "job") {
+      dashboard.setActiveJobId(route.jobId)
+    }
+  }, [dashboard.setActiveJobId, route])
+
   const handleOpenJob = (jobId: string) => {
+    dashboard.setActiveJobId(jobId)
     window.location.hash = `/jobs/${jobId}`
     setRoute({ name: "job", jobId })
-  }
-
-  const handleOpenJobs = () => {
-    window.location.hash = "/jobs"
-    setRoute({ name: "jobs" })
   }
 
   const handleBackToDashboard = () => {
@@ -52,64 +42,14 @@ export function App() {
     setRoute({ name: "dashboard" })
   }
 
-  const handleConfirmStage = (stageId: FabricationStageId) => {
-    if (!selectedJob) {
-      return
-    }
-
-    const stageIndex = fabricationStages.findIndex(
-      (stage) => stage.id === stageId,
-    )
-    const currentStageIndex = fabricationStages.findIndex(
-      (stage) => stage.id === selectedJob.currentStage,
-    )
-
-    if (stageIndex < 0 || stageIndex !== currentStageIndex) {
-      return
-    }
-
-    const nextStage = fabricationStages[stageIndex + 1]
-    const isComplete = !nextStage
-    const confirmedStage = fabricationStages[stageIndex]
-
-    setJobs((currentJobs) =>
-      currentJobs.map((job) =>
-        job.id === selectedJob.id
-          ? {
-              ...job,
-              currentStage: nextStage?.id ?? job.currentStage,
-              progress: isComplete
-                ? 100
-                : Math.round(
-                    ((stageIndex + 1) / fabricationStages.length) * 100,
-                  ),
-              stage: isComplete ? "Complete" : confirmedStage.output,
-              status: isComplete ? "completed" : "in-progress",
-            }
-          : job,
-      ),
-    )
-  }
-
-  if (selectedJob) {
+  if (route.name === "job") {
     return (
-      <FabricationPage
-        job={selectedJob}
+      <JobStagesPage
+        dashboard={dashboard}
         onBackToDashboard={handleBackToDashboard}
-        onConfirmStage={handleConfirmStage}
       />
     )
   }
 
-  if (route.name === "jobs") {
-    return (
-      <JobsPage
-        jobs={jobs}
-        onBackToDashboard={handleBackToDashboard}
-        onOpenJob={handleOpenJob}
-      />
-    )
-  }
-
-  return <Dashboard onOpenJobs={handleOpenJobs} />
+  return <Dashboard dashboard={dashboard} onOpenJob={handleOpenJob} />
 }

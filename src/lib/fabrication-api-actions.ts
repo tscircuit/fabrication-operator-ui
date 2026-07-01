@@ -14,6 +14,14 @@ export type OperatorActionResult = {
 
 export type CarrierOrientation = "bottom" | "pcb_drop" | "pcb_insertion" | "top"
 
+export interface CreateFabricationJobFromCircuitJsonInput {
+  board?: string
+  circuitJson: unknown
+  file: string
+  layers?: string
+  name: string
+}
+
 function getLookup(job: Job) {
   return { fabrication_job_id: job.id }
 }
@@ -37,6 +45,75 @@ export async function createFabricationJobFromSample(sampleJobId: string) {
   })
 
   return normalizeFabricationJob(rawJob, sampleJob)
+}
+
+export async function createFabricationJobFromCircuitJson({
+  board,
+  circuitJson,
+  file,
+  layers,
+  name,
+}: CreateFabricationJobFromCircuitJsonInput) {
+  const lbrnFiles = await createLbrnFilesForFabricationJob(circuitJson)
+  const rawJob = await fakeFabricationServerClient.createFabricationJob({
+    name,
+    file,
+    board: board ?? getBoardLabel(circuitJson),
+    layers: layers ?? "top / bottom",
+    circuit_json: circuitJson as ApiJson,
+    lbrn_files: lbrnFiles,
+  })
+
+  return normalizeFabricationJob(rawJob, {
+    id: file,
+    name,
+    file,
+    loadCircuitJson: () =>
+      Promise.resolve(Array.isArray(circuitJson) ? circuitJson : []),
+    board: board ?? getBoardLabel(circuitJson),
+    layers: layers ?? "top / bottom",
+    stage: "Ready for setup",
+    currentStage: "LOAD_PCB",
+    status: "pending",
+    elapsed: "0:00",
+    progress: 0,
+  })
+}
+
+function getBoardLabel(circuitJson: unknown) {
+  if (!Array.isArray(circuitJson)) {
+    return "Circuit JSON"
+  }
+
+  const board = circuitJson.find(
+    (element): element is Record<string, unknown> =>
+      typeof element === "object" &&
+      element !== null &&
+      !Array.isArray(element) &&
+      element.type === "pcb_board",
+  )
+  const width = getFiniteNumber(board?.width)
+  const height = getFiniteNumber(board?.height)
+
+  if (width && height) {
+    return `${width.toFixed(2)} x ${height.toFixed(2)} mm`
+  }
+
+  return "Circuit JSON"
+}
+
+function getFiniteNumber(value: unknown) {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return value
+  }
+
+  if (typeof value === "string") {
+    const numberValue = Number(value)
+
+    return Number.isFinite(numberValue) ? numberValue : undefined
+  }
+
+  return undefined
 }
 
 export async function completeCurrentStage(job: Job) {
