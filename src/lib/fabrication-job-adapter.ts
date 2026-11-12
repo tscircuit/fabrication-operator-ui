@@ -217,10 +217,14 @@ export function normalizeFabricationJob(
     rawStatus == null
       ? (fallback?.status ?? "pending")
       : normalizeStatus(rawStatus)
+  const hasCompletedUpdate =
+    (rawStatus != null && status === "completed") ||
+    (rawCurrentStage != null && currentStage === "COMPLETE")
   const progress =
     getNumber(record, ["progress", "percent_complete", "completion"]) ??
-    fallback?.progress ??
-    getProgress(currentStage, status)
+    (hasCompletedUpdate
+      ? getProgress(currentStage, status)
+      : (fallback?.progress ?? getProgress(currentStage, status)))
   const file =
     getString(record, ["file", "filename", "file_name", "source_file"]) ??
     fallback?.file ??
